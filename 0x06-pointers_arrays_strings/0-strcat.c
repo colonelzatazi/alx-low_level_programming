@@ -6,18 +6,17 @@
  * @src: string to append on dest
  * Return: address of dest
  */
-
 char *_strcat(char *dest, char *src)
 {
-	int a, b;
+	int i, j;
 
-	a = b = 0;
-	while (*(dest + a))
-		a++;
-	while ((*(dest + a) = *(src + b)))
+	i = 0;
+	for (j = 0; dest[j] != '\0'; j++)
+		;
+	while (src[i] != '\0')
 	{
-		a++;
-		b++;
+		dest[j + i] = src[i];
+		i++;
 	}
 	return (dest);
 }

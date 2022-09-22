@@ -1,8 +1,5 @@
 #include <stdio.h>
-/**
-* main - encoding program
-* Return: always return 0
-*/
+
 int main(void)
 {
 	int n;

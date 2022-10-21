@@ -1,8 +1,3 @@
-/*
- * File: 0-print_list.c
- * Auth: Brennan D Baraban
- */
-
 #include "lists.h"
 #include <stdio.h>
 
@@ -31,3 +26,4 @@ size_t print_list(const list_t *h)
 
 	return (nodes);
 }
+

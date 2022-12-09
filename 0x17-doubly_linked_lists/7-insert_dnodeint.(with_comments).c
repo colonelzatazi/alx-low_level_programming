@@ -39,8 +39,7 @@ dlistint_t *insert_at_end(dlistint_t **h, dlistint_t *new)
 }
 
 /**
- * insrt_in_list - inserts a new node 'new' in a given position 'idx', in a
- *                 doubly linked list
+ * insrt_in_list - inserts a new node 'new' in a given position 'idx', in a list
  * @h: the address of a pointer to the first node of the dlistint_t list
  * @new: the new node
  * @idx: the index at which to insert
@@ -59,6 +58,7 @@ dlistint_t *insrt_in_list(dlistint_t **h, dlistint_t *new, unsigned int idx)
 
 	return (new);
 }
+
 /**
  * insert_dnodeint_at_index - a function that inserts a new node at a given
  *                            position.
@@ -75,14 +75,21 @@ dlistint_t *insert_dnodeint_at_index(dlistint_t **h, unsigned int idx, int n)
 
 	if ((h == NULL || *h == NULL) && idx > 0)
 		return (NULL);
-	new = node(n);	/* create new node */
+
+	/* create new node */
+	new = node(n);
+
+	/* assign new to h if h == NULL (i.e. creates a new list) */
 	if ((h == NULL || *h == NULL) && idx == 0)
 	{
 		*h = new;
 		return (new);
 	}
-	while ((*h)->prev != NULL)  /* go to the begining of the list */
+
+	/* go to the begining of the list */
+	while ((*h)->prev != NULL)
 		*h = (*h)->prev;
+
 	/* assigns new to index 0 if list contains only one node */
 	if ((*h)->prev == NULL && idx == 0)
 	{
@@ -90,22 +97,29 @@ dlistint_t *insert_dnodeint_at_index(dlistint_t **h, unsigned int idx, int n)
 		(*h)->prev = new;
 		return (new);
 	}
-	ptr = *h;  /* get number of nodes in the list */
+
+	/* get number of nodes in the list */
+	ptr = *h;
 	while (ptr != NULL)
 	{
 		count++;
 		ptr = ptr->next;
 	}
-	if (idx > count)  /* check if idx > count */
+
+	/* check if idx > count */
+	if (idx > count)
 	{
 		free(new);
 		return (NULL);
 	}
-	if (idx == count)  /* insert node at index at the end */
+
+	/* insert node at index at the end */
+	if (idx == count)
 	{
 		new = insert_at_end(h, new);
 		return (new);
 	}
+
 	/* insert node at index within the list */
 	new = insrt_in_list(h, new, idx);
 	return (new);

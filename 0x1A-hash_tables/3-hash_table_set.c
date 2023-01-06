@@ -1,78 +1,66 @@
 #include "hash_tables.h"
 
-
 /**
- * create_node - a function that creates a new hash table array node
- * @key: the key
- * @value: the value
- * Return: a pointer to the newly created hash table array node
+ * free_node - Free a node.
+ * @node: Node to free.
+ *
+ * Return: Void.
  */
-hash_node_t *create_node(const unsigned char *key, const char *value)
+void free_node(hash_node_t *node)
 {
-	hash_node_t *new_node;
-
-	new_node = malloc(sizeof(hash_node_t));
-	if (new_node == NULL)
-		return (NULL);
-
-	/* TODO-DONE: use strcpy if `assignment operator` fails */
-	new_node->key = strdup(key);
-	new_node->value = strdup(value);
-	new_node->next = NULL;
-
-	return (new_node);
+	free(node->key);
+	free(node->value);
+	free(node);
 }
 
 /**
- * hash_table_set - a function that adds an element to the hash table
- * @ht: the hash table you want to add or update the key/value to
- * @key: the key.
- *       @key cannot be an empty string.
- * @value: the value associated with the key.
- *         @value must be duplicated.
- *         @value can be an empty string
- * Return: 1 if succeeded, 0 otherwise
+ * hash_table_set - Set a value in the hash table.
+ * @ht: Hash table.
+ * @key: Key to be indexed.
+ * @value: Value to set in the hash table.
+ *
+ * Return: 1 if works, 0 if doesn't.
  */
 int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 {
 	unsigned long int index;
-	hash_node_t *temp, *ptr;
+	hash_node_t *new_node, *current;
 
-	if (ht == NULL || key == NULL)
-		return (0); /* TODO-DONE: do something here */
-
+	if (strcmp(key, "") == 0 || key == NULL || ht == NULL)
+		return (0);
 	index = key_index((const unsigned char *)key, ht->size);
-	temp = create_node((const unsigned char *)key, value);
-	if (temp == NULL)
-		return (0); /* TODO-DONE: malloc failed. Do something */
-
-	/* Case 1: no collision */
+	new_node = malloc(sizeof(hash_node_t));
+	if (new_node == NULL)
+		return (0);
+	new_node->key = strdup((char *)key);
+	new_node->value = strdup((char *)value);
+	new_node->next = NULL;
 	if (ht->array[index] == NULL)
+		ht->array[index] = new_node;
+	else
 	{
-		ht->array[index] = temp;
-		temp = NULL;
-		return (1);
-	}
-
-	/* case 2: collision occured */
-	if (ht->array[index] != NULL)
-	{
-		/* replace value if key exists in linked list */
-		ptr = ht->array[index];
-		while (ptr != NULL)
+		current = ht->array[index];
+		if (strcmp(current->key, key) == 0)
 		{
-			if (strcmp(ptr->key, key) == 0)
-			{
-				ptr->value = strdup(value);
-				free(temp), temp = NULL;
-				return (1);
-			}
-			ptr = ptr->next;
+			new_node->next = current->next;
+			ht->array[index] = new_node;
+			free_node(current);
+			return (1);
 		}
-		/* add to top of bucket if keys are different */
-		temp->next = ht->array[index];
-		ht->array[index] = temp;
-		return (1);
+		while (current->next != NULL && strcmp(current->next->key, key) != 0)
+		{ current = current->next;
+		}
+		if (strcmp(current->key, key) == 0)
+		{
+			new_node->next = current->next->next;
+			free_node(current->next);
+			current->next = new_node;
+		}
+		else
+		{
+			new_node->next = ht->array[index];
+			ht->array[index] = new_node;
+		}
 	}
-	return (0);
+	return (1);
 }
